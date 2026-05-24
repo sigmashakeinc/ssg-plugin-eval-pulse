@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Eval Pulse</title>
+		<style>
+			:root { color-scheme: dark; }
+			body {
+				margin: 0;
+				font: 14px/1.5 system-ui, sans-serif;
+				background: #0b0d10;
+				color: #e6e8eb;
+				padding: 20px;
+			}
+			h1 { font-size: 16px; margin: 0 0 16px; }
+			.cards { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+			.card {
+				flex: 1 1 120px;
+				background: #14171c;
+				border: 1px solid #232a31;
+				border-radius: 10px;
+				padding: 14px;
+			}
+			.card .n { font-size: 28px; font-weight: 700; font-variant-numeric: tabular-nums; }
+			.card .l { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: #8a939c; }
+			.allowed .n { color: #4ade80; }
+			.denied .n { color: #f87171; }
+			.errors .n { color: #fbbf24; }
+			ul { list-style: none; margin: 0; padding: 0; }
+			li {
+				display: flex; gap: 10px; align-items: center;
+				padding: 7px 0; border-bottom: 1px solid #1b2127; font-size: 13px;
+			}
+			.pill { font-size: 10px; text-transform: uppercase; padding: 1px 6px; border-radius: 4px; }
+			.allow { background: #064e3b; color: #6ee7b7; }
+			.deny { background: #4c1d1d; color: #fca5a5; }
+			.tool { font-family: ui-monospace, monospace; color: #cbd5e1; }
+			.err { color: #f87171; }
+			.muted { color: #8a939c; }
+		</style>
+	</head>
+	<body>
+		<h1>Eval Pulse</h1>
+		<div class="cards">
+			<div class="card"><div class="n" id="total">–</div><div class="l">total</div></div>
+			<div class="card allowed"><div class="n" id="allowed">–</div><div class="l">allowed</div></div>
+			<div class="card denied"><div class="n" id="denied">–</div><div class="l">denied</div></div>
+			<div class="card errors"><div class="n" id="errors">–</div><div class="l">errors</div></div>
+		</div>
+		<div class="l muted" style="margin-bottom:6px">recent decisions</div>
+		<ul id="feed"><li class="muted">loading…</li></ul>
+
+		<script type="module">
+			// Reference plugin — rides the SSG daemon backend with the injected
+			// per-plugin token. For typed authoring use @sigmashake/plugin-sdk.
+			const cfg = window.__SSG_PLUGIN_CONFIG__ || {};
+			async function api(path) {
+				const r = await fetch(path, {
+					headers: { Accept: "application/json", "X-SigmaShake-Token": cfg.token || "" },
+				});
+				if (!r.ok) throw new Error("HTTP " + r.status);
+				return r.json();
+			}
+			const $ = (id) => document.getElementById(id);
+			function setText(id, v) { $(id).textContent = v; }
+
+			async function tick() {
+				try {
+					const c = await api("/api/state/counters");
+					setText("total", c.total ?? 0);
+					setText("allowed", c.allowed ?? 0);
+					setText("denied", c.denied ?? 0);
+					setText("errors", c.errors ?? 0);
+				} catch (e) {
+					setText("total", "!");
+				}
+				try {
+					const t = await api("/api/state/activity-tail?n=10");
+					const rows = Array.isArray(t) ? t : t.entries || t.rows || [];
+					const feed = $("feed");
+					feed.innerHTML = "";
+					if (rows.length === 0) {
+						feed.innerHTML = '<li class="muted">no activity yet</li>';
+						return;
+					}
+					for (const row of rows.slice(0, 10)) {
+						const decision = String(row.decision || row.verdict || "").toLowerCase();
+						const tool = row.tool || row.tool_name || "?";
+						const li = document.createElement("li");
+						const pill = decision.includes("den") || decision.includes("block") ? "deny" : "allow";
+						li.innerHTML =
+							'<span class="pill ' + pill + '">' + (decision || "—") + "</span>" +
+							'<span class="tool">' + String(tool) + "</span>";
+						feed.appendChild(li);
+					}
+				} catch (e) {
+					$("feed").innerHTML = '<li class="err">activity unavailable: ' + e.message + "</li>";
+				}
+			}
+			tick();
+			setInterval(tick, 2000);
+		</script>
+	</body>
+</html>

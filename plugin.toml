@@ -1,0 +1,14 @@
+# eval-pulse — live SSG eval counters + a feed of recent governance decisions.
+id              = "eval-pulse"
+version         = "0.1.0"
+name            = "Eval Pulse"
+description     = "Live eval counters and a feed of recent governance decisions."
+category        = "observability"
+entry           = "index.html"
+min_ssg_version = "0.29.94"
+
+[[nav]]
+label   = "Eval Pulse"
+path    = "/plugins/eval-pulse/"
+section = "activity"
+order   = 50
