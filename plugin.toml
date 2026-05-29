@@ -1,6 +1,6 @@
 # eval-pulse — live SSG eval counters + a feed of recent governance decisions.
 id              = "eval-pulse"
-version         = "0.1.0"
+version         = "0.1.1"
 name            = "Eval Pulse"
 description     = "Live eval counters and a feed of recent governance decisions."
 category        = "observability"

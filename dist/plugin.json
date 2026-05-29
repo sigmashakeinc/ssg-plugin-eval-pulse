@@ -1,12 +1,12 @@
 {
   "id": "eval-pulse",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "name": "Eval Pulse",
   "description": "Live eval counters and a feed of recent governance decisions.",
   "entry": "index.html",
-  "artifact_url": "https://github.com/sigmashakeinc/ssg-plugin-eval-pulse/releases/download/v0.1.0/eval-pulse-0.1.0.tar.gz",
-  "artifact_sha256": "cfbfbabf7c067276744a8d914e3219a276f56b1500a95544ce0107b2c3c669af",
-  "artifact_signature": "bf678a0b3866c00ea3a3219bb7ebc1ad53a09b191996ac5cb82335e77637b74ba9a7ccc8423f3045646e89f3f06ee706a6a966e2830cbc9b1cc04de263966101",
+  "artifact_url": "https://github.com/sigmashakeinc/ssg-plugin-eval-pulse/releases/download/v0.1.1/eval-pulse-0.1.1.tar.gz",
+  "artifact_sha256": "a91230848a57e881342a6e5513bce87f4f62d2691594cc38baca1cf0b97d0f40",
+  "artifact_signature": "f0d8143913b3f1abca7fbad935b226266fb76888fa21108055769f28bd5169f313a766fe5bcf845eb089fdf407d87b17175af3d75b4e47deaf4729a5b7df1b05",
   "signing_fingerprint": "302a300506032b6570032100fa27b2eba3b238546c2c6bb48358f6e376cf31c80ab23d4215cacfabfc6dbd55",
   "min_ssg_version": "0.29.94",
   "nav": [
